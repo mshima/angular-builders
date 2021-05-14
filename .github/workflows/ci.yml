@@ -14,12 +14,6 @@ jobs:
       fail-fast: true
 
     steps:
-      - if: (!github.event.pull_request)
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.GH_PERSONAL_TOKEN }}
-          fetch-depth: 0
-
       - if: github.event.pull_request
         uses: actions/checkout@v2
 
@@ -45,14 +39,3 @@ jobs:
 
       - name: Run CI scripts
         run: yarn ci
-
-      - name: Publish to NPM
-        if: github.ref == 'refs/heads/master'
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          git reset --hard	
-          git config --global user.name ${{ secrets.GIT_USER }}
-          git config --global user.email ${{ secrets.GIT_EMAIL }}
-          npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
-          bash scripts/default-registry.sh
